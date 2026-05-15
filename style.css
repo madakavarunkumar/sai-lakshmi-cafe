@@ -12,14 +12,17 @@ body{
 
 .navbar{
   position:fixed;
+  top:0;
   width:100%;
-  padding:20px 8%;
+  padding:18px 8%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  background:rgba(0,0,0,0.5);
-  backdrop-filter:blur(10px);
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(255,255,255,0.1);
   z-index:1000;
+  transition:0.4s;
 }
 
 .logo{
@@ -134,19 +137,20 @@ body{
 .card:hover,
 .review:hover{
   transform:translateY(-10px);
-}
-
-.menu-card{
+}.menu-card{
   background:#1c1c1c;
   border-radius:20px;
   overflow:hidden;
   width:300px;
-  transition:0.3s;
+  transition:0.4s;
+  cursor:pointer;
 }
 
 .menu-card:hover{
-  transform:scale(1.05);
+  transform:translateY(-12px) scale(1.03);
+  box-shadow:0 20px 40px rgba(212,163,115,0.3);
 }
+
 
 .menu-card img{
   width:100%;
@@ -204,4 +208,24 @@ body{
     flex-direction:column;
   }
 
+}.whatsapp-float{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  background:#25D366;
+  color:white;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:28px;
+  text-decoration:none;
+  box-shadow:0 0 20px rgba(37,211,102,0.5);
+  z-index:999;
+  transition:0.3s;
+}
+.whatsapp-float:hover{
+  transform:scale(1.1);
 }
