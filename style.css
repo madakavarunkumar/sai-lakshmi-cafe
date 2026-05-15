@@ -1,0 +1,207 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#111;
+  color:white;
+}
+
+.navbar{
+  position:fixed;
+  width:100%;
+  padding:20px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(10px);
+  z-index:1000;
+}
+
+.logo{
+  color:#d4a373;
+}
+
+.navbar ul{
+  display:flex;
+  gap:20px;
+  list-style:none;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+}
+
+.hero{
+  height:100vh;
+  background:url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+.overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+}
+
+.hero-content{
+  position:relative;
+  text-align:center;
+  z-index:2;
+}
+
+.hero h2{
+  font-size:60px;
+  margin-bottom:20px;
+}
+
+.hero p{
+  font-size:20px;
+  margin-bottom:30px;
+}
+
+.buttons{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+}
+
+.btn{
+  padding:14px 30px;
+  background:#d4a373;
+  color:white;
+  border-radius:40px;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:scale(1.1);
+}
+
+.btn2{
+  background:transparent;
+  border:2px solid #d4a373;
+}
+
+.about,
+.menu,
+.gallery,
+.reviews,
+.contact{
+  padding:100px 8%;
+  text-align:center;
+}
+
+.about h2,
+.menu h2,
+.gallery h2,
+.reviews h2,
+.contact h2{
+  margin-bottom:50px;
+  font-size:40px;
+  color:#d4a373;
+}
+
+.about-box,
+.menu-container,
+.review-box{
+  display:flex;
+  gap:30px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.card,
+.review{
+  background:#1c1c1c;
+  padding:30px;
+  border-radius:20px;
+  width:300px;
+  transition:0.3s;
+}
+
+.card:hover,
+.review:hover{
+  transform:translateY(-10px);
+}
+
+.menu-card{
+  background:#1c1c1c;
+  border-radius:20px;
+  overflow:hidden;
+  width:300px;
+  transition:0.3s;
+}
+
+.menu-card:hover{
+  transform:scale(1.05);
+}
+
+.menu-card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.menu-card h3{
+  margin-top:20px;
+}
+
+.menu-card p{
+  margin:20px;
+  color:#d4a373;
+}
+
+.gallery-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.gallery-container img{
+  width:100%;
+  border-radius:20px;
+  transition:0.3s;
+}
+
+.gallery-container img:hover{
+  transform:scale(1.05);
+}
+
+.call-btn{
+  display:inline-block;
+  margin-top:30px;
+  padding:15px 40px;
+  background:#d4a373;
+  color:white;
+  text-decoration:none;
+  border-radius:40px;
+}
+
+@media(max-width:768px){
+
+  .hero h2{
+    font-size:40px;
+  }
+
+  .navbar{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .buttons{
+    flex-direction:column;
+  }
+
+}
