@@ -229,3 +229,19 @@ body{
 .whatsapp-float:hover{
   transform:scale(1.1);
 }
+.order-btn{
+  margin-top:15px;
+  padding:12px 25px;
+  border:none;
+  border-radius:30px;
+  background:#c59d5f;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.order-btn:hover{
+  transform:scale(1.05);
+  background:#a67c3d;
+}

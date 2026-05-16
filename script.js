@@ -9,9 +9,9 @@ const firebaseConfig = {
   appId: "1:602856320749:web:b60b9af0f9e0aa7e2aa6e4"
 };
 
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
-console.log("Firebase Connected");const sheetID = "1EKM11SlVZV8WnXFuc8a5gxaB3ccQN8u_z7b8ExvyKeg";
+const sheetID = "1EKM11SlVZV8WnXFuc8a5gxaB3ccQN8u_z7b8ExvyKeg";
 
 const url = `https://opensheet.elk.sh/${sheetID}/Sheet1`;
 
@@ -27,10 +27,19 @@ fetch(url)
 
       menuContainer.innerHTML += `
         <div class="menu-card">
+
           <div class="menu-content">
+
             <h3>${item.Item}</h3>
+
             <p>₹${item.Price}</p>
+
+            <button class="order-btn">
+              Order Now
+            </button>
+
           </div>
+
         </div>
       `;
 
