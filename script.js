@@ -46,3 +46,37 @@ fetch(url)
     });
 
   });
+  const popup = document.getElementById("popup");
+  document.addEventListener("click", (e) => {
+
+  if(e.target.classList.contains("order-btn")){
+
+    popup.style.display = "flex";
+
+  }
+
+});
+
+document.getElementById("closePopup")
+.addEventListener("click", () => {
+
+  popup.style.display = "none";
+
+});
+const benchSelect = document.getElementById("benchNumber");
+
+const customBench = document.getElementById("customBench");
+
+benchSelect.addEventListener("change", () => {
+
+  if(benchSelect.value === "Other"){
+
+    customBench.style.display = "block";
+
+  }else{
+
+    customBench.style.display = "none";
+
+  }
+
+});
