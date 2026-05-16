@@ -1,5 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
+import {
+  getFirestore,
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDb5iLgpVampkzP1G2Y1lLEZDwEw0dhYUM",
   authDomain: "sai-lakshmi-cafe.firebaseapp.com",
@@ -9,7 +15,9 @@ const firebaseConfig = {
   appId: "1:602856320749:web:b60b9af0f9e0aa7e2aa6e4"
 };
 
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
 
 const sheetID = "1EKM11SlVZV8WnXFuc8a5gxaB3ccQN8u_z7b8ExvyKeg";
 
@@ -47,15 +55,7 @@ fetch(url)
 
   });
   const popup = document.getElementById("popup");
-  document.addEventListener("click", (e) => {
-
-  if(e.target.classList.contains("order-btn")){
-
-    popup.style.display = "flex";
-
-  }
-
-});
+  
 
 document.getElementById("closePopup")
 .addEventListener("click", () => {
@@ -76,6 +76,76 @@ benchSelect.addEventListener("change", () => {
   }else{
 
     customBench.style.display = "none";
+
+  }
+
+});
+let selectedItem = "";
+
+document.addEventListener("click", (e) => {
+
+  if(e.target.classList.contains("order-btn")){
+
+    popup.style.display = "flex";
+
+    selectedItem =
+      e.target.parentElement.querySelector("h3").innerText;
+
+  }
+
+});
+
+document.getElementById("submitOrder")
+.addEventListener("click", async () => {
+
+  const customerName =
+    document.getElementById("customerName").value;
+
+  let bench =
+    document.getElementById("benchNumber").value;
+
+  const customBench =
+    document.getElementById("customBench").value;
+
+  const requirements =
+    document.getElementById("requirements").value;
+
+  if(bench === "Other"){
+
+    bench = customBench;
+
+  }
+
+  if(
+    customerName === "" ||
+    bench === ""
+  ){
+    alert("Please fill all details");
+    return;
+  }
+
+  try{
+
+    await addDoc(collection(db, "orders"), {
+
+      customerName,
+      bench,
+      requirements,
+      item:selectedItem,
+      status:"Waiting",
+      time:new Date()
+
+    });
+
+    alert("Order Submitted Successfully 🔥");
+
+    popup.style.display = "none";
+
+  }catch(error){
+
+    alert("Error submitting order");
+
+    console.log(error);
 
   }
 
