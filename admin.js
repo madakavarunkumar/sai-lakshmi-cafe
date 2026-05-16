@@ -20,7 +20,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+const password = prompt("Enter Admin Password");
 
+if(password !== "sailakshmi123"){
+
+  document.body.innerHTML = `
+    <h1 style="
+      color:white;
+      text-align:center;
+      margin-top:100px;
+      font-family:Poppins;
+    ">
+      Access Denied
+    </h1>
+  `;
+
+  throw new Error("Wrong Password");
+
+}
 const ordersContainer =
   document.getElementById("orders-container");
 
