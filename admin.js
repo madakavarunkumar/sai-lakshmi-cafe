@@ -5,7 +5,8 @@ import {
   collection,
   onSnapshot,
   doc,
-  updateDoc
+  updateDoc,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -65,9 +66,13 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
 
           <p>Status: ${order.status}</p>
 
-          <button onclick="acceptOrder('${docData.id}')">
-            Accept
-          </button>
+         <button onclick="acceptOrder('${docData.id}')">
+  Accept
+</button>
+
+<button onclick="deleteOrder('${docData.id}')">
+  Delete
+</button>
 
         </div>
 
@@ -88,5 +93,17 @@ window.acceptOrder = async (id) => {
     status:"Accepted"
 
   });
+
+};
+window.deleteOrder = async (id) => {
+
+  const confirmDelete =
+    confirm("Delete this order?");
+
+  if(confirmDelete){
+
+    await deleteDoc(doc(db, "orders", id));
+
+  }
 
 };
