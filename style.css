@@ -302,3 +302,12 @@ body{
 }#customBench{
   display:none;
 }
+.menu-content button{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  background:#d4a373;
+  color:white;
+  cursor:pointer;
+}
