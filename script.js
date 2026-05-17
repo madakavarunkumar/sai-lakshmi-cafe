@@ -3,7 +3,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import {
   getFirestore,
   collection,
-  addDoc
+  addDoc,
+  doc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -126,7 +128,7 @@ document.getElementById("submitOrder")
 
   try{
 
-    await addDoc(collection(db, "orders"), {
+    const orderRef = await addDoc(collection(db, "orders"), {
 
       customerName,
       bench,
@@ -138,6 +140,9 @@ document.getElementById("submitOrder")
     });
 
     alert("Order Submitted Successfully 🔥");
+    localStorage.setItem("orderId", orderRef.id);
+
+listenOrderStatus(orderRef.id);
 
     popup.style.display = "none";
 
@@ -150,3 +155,34 @@ document.getElementById("submitOrder")
   }
 
 });
+function listenOrderStatus(orderId){
+
+  const statusText =
+    document.getElementById("liveStatus");
+
+  const orderDoc =
+    doc(db, "orders", orderId);
+
+  onSnapshot(orderDoc, (snapshot) => {
+
+    if(snapshot.exists()){
+
+      const data = snapshot.data();
+
+      statusText.innerText =
+        data.status;
+
+    }
+
+  });
+
+}
+
+const savedOrderId =
+  localStorage.getItem("orderId");
+
+if(savedOrderId){
+
+  listenOrderStatus(savedOrderId);
+
+}

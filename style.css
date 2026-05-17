@@ -309,5 +309,25 @@ body{
   border-radius:20px;
   background:#d4a373;
   color:white;
-  cursor:pointer;
+  cursor:pointer
+}
+.status-box{
+  position:fixed;
+  top:100px;
+  right:20px;
+  background:#1c1c1c;
+  padding:15px 20px;
+  border-radius:15px;
+  z-index:999;
+  box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.status-box h3{
+  color:#d4a373;
+  margin-bottom:10px;
+}
+
+#liveStatus{
+  color:white;
+  font-weight:600;
 }

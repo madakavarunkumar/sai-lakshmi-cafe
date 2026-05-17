@@ -1,54 +1,59 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getFirestore,
   collection,
   onSnapshot,
-  doc,
   updateDoc,
-  deleteDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  deleteDoc,
+  doc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyDb5iLgpVampkzP1G2Y1lLEZDwEw0dhYUM",
+
   authDomain: "sai-lakshmi-cafe.firebaseapp.com",
+
   projectId: "sai-lakshmi-cafe",
+
   storageBucket: "sai-lakshmi-cafe.firebasestorage.app",
+
   messagingSenderId: "602856320749",
+
   appId: "1:602856320749:web:b60b9af0f9e0aa7e2aa6e4"
+
 };
 
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
-const password = prompt("Enter Admin Password");
 
-if(password !== "sailakshmi123"){
-
-  document.body.innerHTML = `
-    <h1 style="
-      color:white;
-      text-align:center;
-      margin-top:100px;
-      font-family:Poppins;
-    ">
-      Access Denied
-    </h1>
-  `;
-
-  throw new Error("Wrong Password");
-
-}
 const ordersContainer =
   document.getElementById("orders-container");
+
+const orderSound =
+  document.getElementById("newOrderSound");
+
+let firstLoad = true;
 
 onSnapshot(collection(db, "orders"), (snapshot) => {
 
   ordersContainer.innerHTML = "";
 
-  snapshot.forEach((docData) => {
+  if(!firstLoad){
 
-    const order = docData.data();
+    orderSound.play();
+
+  }
+
+  firstLoad = false;
+
+  snapshot.forEach((docSnap) => {
+
+    const data = docSnap.data();
 
     ordersContainer.innerHTML += `
 
@@ -56,23 +61,27 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
 
         <div class="menu-content">
 
-          <h3>${order.item}</h3>
+          <h3>${data.item}</h3>
 
-          <p>Name: ${order.customerName}</p>
+          <p>Customer: ${data.customerName}</p>
 
-          <p>Bench: ${order.bench}</p>
+          <p>Bench: ${data.bench}</p>
 
-          <p>${order.requirements}</p>
+          <p>Status: ${data.status}</p>
 
-          <p>Status: ${order.status}</p>
+          <p>${data.requirements}</p>
 
-         <button onclick="acceptOrder('${docData.id}')">
-  Accept
-</button>
+          <button onclick="acceptOrder('${docSnap.id}')">
+            Accept
+          </button>
 
-<button onclick="deleteOrder('${docData.id}')">
-  Delete
-</button>
+          <button onclick="rejectOrder('${docSnap.id}')">
+            Reject
+          </button>
+
+          <button onclick="deleteOrder('${docSnap.id}')">
+            Delete
+          </button>
 
         </div>
 
@@ -86,19 +95,28 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
 
 window.acceptOrder = async (id) => {
 
-  const orderRef = doc(db, "orders", id);
+  await updateDoc(doc(db, "orders", id), {
 
-  await updateDoc(orderRef, {
-
-    status:"Accepted"
+    status:"Accepted ✅"
 
   });
 
 };
+
+window.rejectOrder = async (id) => {
+
+  await updateDoc(doc(db, "orders", id), {
+
+    status:"Rejected ❌"
+
+  });
+
+};
+
 window.deleteOrder = async (id) => {
 
   const confirmDelete =
-    confirm("Delete this order?");
+    confirm("Delete Order?");
 
   if(confirmDelete){
 
