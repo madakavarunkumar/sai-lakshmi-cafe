@@ -12,19 +12,14 @@ import {
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyDb5iLgpVampkzP1G2Y1lLEZDwEw0dhYUM",
-
+  
+  apiKey: "YOUR_API_KEY",
   authDomain: "sai-lakshmi-cafe.firebaseapp.com",
-
   projectId: "sai-lakshmi-cafe",
-
   storageBucket: "sai-lakshmi-cafe.firebasestorage.app",
-
   messagingSenderId: "602856320749",
-
   appId: "1:602856320749:web:b60b9af0f9e0aa7e2aa6e4"
-
+  
 };
 
 const app = initializeApp(firebaseConfig);
@@ -39,23 +34,25 @@ const orderSound =
 
 let firstLoad = true;
 
-onSnapshot(collection(db, "orders"), (snapshot) => {
-
-  ordersContainer.innerHTML = "";
-
-  if(!firstLoad){
-
-    orderSound.play();
-
-  }
-
-  firstLoad = false;
-
-  snapshot.forEach((docSnap) => {
-
-    const data = docSnap.data();
-
-    ordersContainer.innerHTML += `
+onSnapshot(collection(db, "orders"),
+  
+  (snapshot) => {
+    
+    ordersContainer.innerHTML = "";
+    
+    if (!firstLoad) {
+      
+      orderSound.play();
+      
+    }
+    
+    firstLoad = false;
+    
+    snapshot.forEach((docSnap) => {
+      
+      const data = docSnap.data();
+      
+      ordersContainer.innerHTML += `
 
       <div class="menu-card">
 
@@ -70,6 +67,14 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
           <p>Status: ${data.status}</p>
 
           <p>${data.requirements}</p>
+
+          ${
+            data.reason
+            ?
+            `<p>Reason: ${data.reason}</p>`
+            :
+            ""
+          }
 
           <button onclick="acceptOrder('${docSnap.id}')">
             Accept
@@ -88,45 +93,50 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
       </div>
 
     `;
-
+      
+    });
+    
   });
 
-});
+
 
 window.acceptOrder = async (id) => {
-
+  
   await updateDoc(doc(db, "orders", id), {
-
-    status:"Accepted ✅"
-
+    
+    status: "Accepted ✅"
+    
   });
-
+  
 };
+
+
 
 window.rejectOrder = async (id) => {
   
-  const reason = prompt(
-    "Enter Reject Reason"
-  );
+  const reason =
+    prompt("Enter Reject Reason");
   
   await updateDoc(doc(db, "orders", id), {
     
     status: "Rejected ❌",
-    reason: reason
+    reason: reason || "No reason"
     
   });
   
 };
 
-window.deleteOrder = async (id) => {
 
+
+window.deleteOrder = async (id) => {
+  
   const confirmDelete =
     confirm("Delete Order?");
-
-  if(confirmDelete){
-
+  
+  if (confirmDelete) {
+    
     await deleteDoc(doc(db, "orders", id));
-
+    
   }
-
+  
 };
