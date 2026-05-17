@@ -104,13 +104,18 @@ window.acceptOrder = async (id) => {
 };
 
 window.rejectOrder = async (id) => {
-
+  
+  const reason = prompt(
+    "Enter Reject Reason"
+  );
+  
   await updateDoc(doc(db, "orders", id), {
-
-    status:"Rejected ❌"
-
+    
+    status: "Rejected ❌",
+    reason: reason
+    
   });
-
+  
 };
 
 window.deleteOrder = async (id) => {

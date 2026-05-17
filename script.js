@@ -57,17 +57,11 @@ fetch(url)
 
   });
   const popup = document.getElementById("popup");
-  
+  const benchSelect =
+  document.getElementById("benchNumber");
 
-document.getElementById("closePopup")
-.addEventListener("click", () => {
-
-  popup.style.display = "none";
-
-});
-const benchSelect = document.getElementById("benchNumber");
-
-const customBench = document.getElementById("customBench");
+const customBench =
+  document.getElementById("customBench");
 
 benchSelect.addEventListener("change", () => {
 
@@ -80,6 +74,13 @@ benchSelect.addEventListener("change", () => {
     customBench.style.display = "none";
 
   }
+
+});
+
+document.getElementById("closePopup")
+.addEventListener("click", () => {
+
+  popup.style.display = "none";
 
 });
 let selectedItem = "";
@@ -141,11 +142,19 @@ document.getElementById("submitOrder")
 
     alert("Order Submitted Successfully 🔥");
     localStorage.setItem("orderId", orderRef.id);
+    listenMyOrder(orderRef.id);
 
-listenOrderStatus(orderRef.id);
 
     popup.style.display = "none";
+document.getElementById("customerName").value = "";
 
+document.getElementById("benchNumber").value = "";
+
+document.getElementById("customBench").value = "";
+
+document.getElementById("requirements").value = "";
+
+customBench.style.display = "none";
   }catch(error){
 
     alert("Error submitting order");
@@ -155,34 +164,60 @@ listenOrderStatus(orderRef.id);
   }
 
 });
-function listenOrderStatus(orderId){
 
-  const statusText =
-    document.getElementById("liveStatus");
 
-  const orderDoc =
+const ordersStatus =
+  document.getElementById("ordersStatus");
+
+function listenMyOrder(orderId){
+
+  const orderRef =
     doc(db, "orders", orderId);
 
-  onSnapshot(orderDoc, (snapshot) => {
+  onSnapshot(orderRef, (snapshot) => {
 
     if(snapshot.exists()){
 
       const data = snapshot.data();
 
-      statusText.innerText =
-        data.status;
+      ordersStatus.innerHTML = `
+
+        <div style="
+          margin-bottom:15px;
+          border-bottom:1px solid #444;
+          padding-bottom:10px;
+        ">
+
+          <p>
+            <b>${data.item}</b>
+          </p>
+
+          <p>
+            ${data.status}
+          </p>
+
+          ${
+            data.reason
+            ?
+            `<p>Reason: ${data.reason}</p>`
+            :
+            ""
+          }
+
+        </div>
+
+      `;
 
     }
 
   });
 
 }
-
 const savedOrderId =
   localStorage.getItem("orderId");
 
 if(savedOrderId){
 
-  listenOrderStatus(savedOrderId);
+  listenMyOrder(savedOrderId);
 
 }
