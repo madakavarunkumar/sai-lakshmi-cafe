@@ -233,6 +233,8 @@ document.getElementById("submitOrder")
 
 /* SHOW CUSTOMER ORDERS */
 
+/* SHOW CUSTOMER ORDERS */
+
 function listenMyOrders(){
 
   const savedOrders =
@@ -247,50 +249,43 @@ function listenMyOrders(){
 
   }
 
-  ordersStatus.innerHTML = "";
+  onSnapshot(collection(db, "orders"), (snapshot) => {
 
-  savedOrders.forEach((orderId) => {
+    ordersStatus.innerHTML = "";
 
-    const orderRef =
-    doc(db, "orders", orderId);
+    snapshot.forEach((docSnap) => {
 
-    onSnapshot(orderRef, (snapshot) => {
+      if(savedOrders.includes(docSnap.id)){
 
-      if(snapshot.exists()){
+        const data = docSnap.data();
 
-        const data = snapshot.data();
+        ordersStatus.innerHTML += `
 
-        const orderDiv =
-        document.createElement("div");
+          <div style="
+            margin-bottom:15px;
+            border-bottom:1px solid #444;
+            padding-bottom:10px;
+          ">
 
-        orderDiv.style.marginBottom = "15px";
+            <p>
+              <b>${data.item}</b>
+            </p>
 
-        orderDiv.style.borderBottom =
-        "1px solid #444";
+            <p>
+              ${data.status}
+            </p>
 
-        orderDiv.style.paddingBottom = "10px";
+            ${
+              data.reason
+              ?
+              `<p>Reason: ${data.reason}</p>`
+              :
+              ""
+            }
 
-        orderDiv.innerHTML = `
-
-          <p>
-            <b>${data.item}</b>
-          </p>
-
-          <p>
-            ${data.status}
-          </p>
-
-          ${
-            data.reason
-            ?
-            `<p>Reason: ${data.reason}</p>`
-            :
-            ""
-          }
+          </div>
 
         `;
-
-        ordersStatus.appendChild(orderDiv);
 
       }
 
