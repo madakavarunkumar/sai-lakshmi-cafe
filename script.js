@@ -274,12 +274,24 @@ function listenMyOrders(){
 
   }
 
-  ordersStatus.innerHTML = "";
-
   savedOrders.forEach((orderId) => {
 
     const orderRef =
     doc(db, "orders", orderId);
+
+    const orderBox =
+    document.createElement("div");
+
+    orderBox.style.marginBottom =
+    "15px";
+
+    orderBox.style.borderBottom =
+    "1px solid #444";
+
+    orderBox.style.paddingBottom =
+    "10px";
+
+    ordersStatus.appendChild(orderBox);
 
     onSnapshot(orderRef, (snapshot) => {
 
@@ -287,19 +299,7 @@ function listenMyOrders(){
 
         const data = snapshot.data();
 
-        const orderDiv =
-        document.createElement("div");
-
-        orderDiv.style.marginBottom =
-        "15px";
-
-        orderDiv.style.borderBottom =
-        "1px solid #444";
-
-        orderDiv.style.paddingBottom =
-        "10px";
-
-        orderDiv.innerHTML = `
+        orderBox.innerHTML = `
 
           <p>
             <b>${data.item}</b>
@@ -319,8 +319,6 @@ function listenMyOrders(){
 
         `;
 
-        ordersStatus.appendChild(orderDiv);
-
       }
 
     });
@@ -328,5 +326,4 @@ function listenMyOrders(){
   });
 
 }
-
 listenMyOrders();
