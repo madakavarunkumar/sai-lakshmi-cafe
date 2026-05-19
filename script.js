@@ -30,15 +30,22 @@ const firebaseConfig = {
 
 };
 
+
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+
+/* SHEET */
 
 const sheetID =
 "1EKM11SlVZV8WnXFuc8a5gxaB3ccQN8u_z7b8ExvyKeg";
 
 const url =
 `https://opensheet.elk.sh/${sheetID}/Sheet1`;
+
+
+/* ELEMENTS */
 
 const popup =
 document.getElementById("popup");
@@ -61,15 +68,21 @@ document.getElementById("searchInput");
 const orderCount =
 document.getElementById("orderCount");
 
+
+/* VARIABLES */
+
 let selectedItem = "";
 
+let selectedQty = 1;
 
-/* MENU LOAD */
+
+/* LOAD MENU */
 
 menuContainer.innerHTML =
 `<p class="loading">
 Loading Menu...
 </p>`;
+
 
 fetch(url)
 
@@ -79,23 +92,27 @@ fetch(url)
 
   displayMenu(data);
 
-  searchInput.addEventListener("input", () => {
+  if(searchInput){
 
-    const value =
-    searchInput.value.toLowerCase();
+    searchInput.addEventListener("input", () => {
 
-    const filtered =
-    data.filter(item =>
+      const value =
+      searchInput.value.toLowerCase();
 
-      item.Item
-      .toLowerCase()
-      .includes(value)
+      const filtered =
+      data.filter(item =>
 
-    );
+        item.Item
+        .toLowerCase()
+        .includes(value)
 
-    displayMenu(filtered);
+      );
 
-  });
+      displayMenu(filtered);
+
+    });
+
+  }
 
 })
 
@@ -105,6 +122,8 @@ fetch(url)
 
 });
 
+
+/* DISPLAY MENU */
 
 function displayMenu(data){
 
@@ -116,13 +135,34 @@ function displayMenu(data){
 
       <div class="menu-card">
 
+        <img
+        src="${item.Image}"
+        alt="${item.Item}">
+
         <div class="menu-content">
 
           <h3>${item.Item}</h3>
 
           <p>₹${item.Price}</p>
 
-          <button class="order-btn">
+          <div class="quantity-box">
+
+            <button class="qty-btn minus">
+              -
+            </button>
+
+            <span class="qty">
+              1
+            </span>
+
+            <button class="qty-btn plus">
+              +
+            </button>
+
+          </div>
+
+          <button
+          class="order-btn">
 
             Order Now
 
@@ -139,7 +179,7 @@ function displayMenu(data){
 }
 
 
-/* BENCH */
+/* BENCH SELECT */
 
 benchSelect.addEventListener("change", () => {
 
@@ -160,6 +200,48 @@ benchSelect.addEventListener("change", () => {
 });
 
 
+/* QUANTITY BUTTONS */
+
+document.addEventListener("click", (e) => {
+
+  if(e.target.classList.contains("plus")){
+
+    const qtyElement =
+    e.target.parentElement
+    .querySelector(".qty");
+
+    let qty =
+    Number(qtyElement.innerText);
+
+    qty++;
+
+    qtyElement.innerText = qty;
+
+  }
+
+
+  if(e.target.classList.contains("minus")){
+
+    const qtyElement =
+    e.target.parentElement
+    .querySelector(".qty");
+
+    let qty =
+    Number(qtyElement.innerText);
+
+    if(qty > 1){
+
+      qty--;
+
+      qtyElement.innerText = qty;
+
+    }
+
+  }
+
+});
+
+
 /* OPEN POPUP */
 
 document.addEventListener("click", (e) => {
@@ -168,9 +250,17 @@ document.addEventListener("click", (e) => {
 
     popup.style.display = "flex";
 
+    const parent =
+    e.target.parentElement;
+
     selectedItem =
-    e.target.parentElement
-    .querySelector("h3").innerText;
+    parent.querySelector("h3").innerText;
+
+    selectedQty =
+    Number(
+      parent.querySelector(".qty")
+      .innerText
+    );
 
   }
 
@@ -222,6 +312,7 @@ document.getElementById("submitOrder")
 
   }
 
+
   try{
 
     const orderRef =
@@ -235,6 +326,8 @@ document.getElementById("submitOrder")
 
       item: selectedItem,
 
+      quantity: selectedQty,
+
       status: "Waiting ⏳",
 
       time: new Date()
@@ -247,7 +340,9 @@ document.getElementById("submitOrder")
       localStorage.getItem("myOrders")
     ) || [];
 
+
     savedOrders.push(orderRef.id);
+
 
     localStorage.setItem(
       "myOrders",
@@ -255,7 +350,10 @@ document.getElementById("submitOrder")
     );
 
 
-    alert("Order Submitted Successfully 🔥");
+    alert(
+      "Order Submitted Successfully 🔥"
+    );
+
 
     popup.style.display = "none";
 
@@ -276,6 +374,7 @@ document.getElementById("submitOrder")
       "requirements"
     ).value = "";
 
+
     customBenchInput.style.display =
     "none";
 
@@ -292,7 +391,7 @@ document.getElementById("submitOrder")
 });
 
 
-/* SHOW ORDERS */
+/* SHOW CUSTOMER ORDERS */
 
 function listenMyOrders(){
 
@@ -301,8 +400,14 @@ function listenMyOrders(){
     localStorage.getItem("myOrders")
   ) || [];
 
-  orderCount.innerText =
-  savedOrders.length;
+
+  if(orderCount){
+
+    orderCount.innerText =
+    savedOrders.length;
+
+  }
+
 
   if(savedOrders.length === 0){
 
@@ -313,6 +418,10 @@ function listenMyOrders(){
 
   }
 
+
+  ordersStatus.innerHTML = "";
+
+
   savedOrders.forEach((orderId) => {
 
     const orderRef =
@@ -321,26 +430,50 @@ function listenMyOrders(){
     const orderBox =
     document.createElement("div");
 
+    orderBox.style.marginBottom =
+    "15px";
+
+    orderBox.style.borderBottom =
+    "1px solid #444";
+
+    orderBox.style.paddingBottom =
+    "10px";
+
+
     ordersStatus.appendChild(orderBox);
+
 
     onSnapshot(orderRef, (snapshot) => {
 
       if(snapshot.exists()){
 
-        const data = snapshot.data();
+        const data =
+        snapshot.data();
+
 
         orderBox.innerHTML = `
 
           <p>
+
             <b>${data.item}</b>
+
+          </p>
+
+          <p>
+
+            Quantity:
+            ${data.quantity || 1}
+
           </p>
 
           <p class="${
-            data.status.includes('Accepted')
-            ? 'accepted'
-            : data.status.includes('Rejected')
-            ? 'rejected'
-            : 'waiting'
+            data.status.includes("Accepted")
+            ? "accepted"
+
+            : data.status.includes("Rejected")
+            ? "rejected"
+
+            : "waiting"
           }">
 
             ${data.status}
@@ -350,13 +483,19 @@ function listenMyOrders(){
           ${
             data.reason
             ?
-            `<p>Reason: ${data.reason}</p>`
-            :
-            ""
+
+            `<p>
+              Reason:
+              ${data.reason}
+            </p>`
+
+            : ""
           }
 
           <p class="order-time">
+
             Live Status Updating...
+
           </p>
 
         `;
@@ -368,5 +507,8 @@ function listenMyOrders(){
   });
 
 }
+
+
+/* START */
 
 listenMyOrders();

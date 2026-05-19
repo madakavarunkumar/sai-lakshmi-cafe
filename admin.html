@@ -8,29 +8,46 @@
   <meta name="viewport"
   content="width=device-width, initial-scale=1.0">
 
-  <title>Admin Panel</title>
+  <title>
+    Sai Lakshmi Cafe Admin
+  </title>
 
   <link rel="stylesheet"
   href="style.css">
+
+  <link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet">
 
 </head>
 
 <body>
 
+  <!-- ADMIN HEADER -->
+
   <section class="menu">
 
     <div class="admin-top">
 
-      <h2>Live Orders</h2>
+      <h2>
+        Live Orders 🔥
+      </h2>
 
       <div class="live-count">
 
         Total Orders:
-        <span id="totalOrders">0</span>
+        <span id="totalOrders">
+
+          0
+
+        </span>
 
       </div>
 
     </div>
+
+
+    <!-- LIVE ORDERS -->
 
     <div
     id="orders-container"
@@ -40,12 +57,19 @@
 
   </section>
 
+
+  <!-- ORDER SOUND -->
+
   <audio id="newOrderSound">
 
     <source
-    src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
+    src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+    type="audio/ogg">
 
   </audio>
+
+
+  <!-- ADMIN SCRIPT -->
 
   <script type="module"
   src="admin.js"></script>

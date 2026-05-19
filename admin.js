@@ -9,6 +9,7 @@ if(password !== "12345"){
       color:white;
       text-align:center;
       margin-top:100px;
+      font-family:Poppins,sans-serif;
     ">
 
       Access Denied ❌
@@ -21,6 +22,8 @@ if(password !== "12345"){
 
 }
 
+
+/* FIREBASE IMPORTS */
 
 import { initializeApp }
 
@@ -38,12 +41,18 @@ import {
 
   deleteDoc,
 
-  doc
+  doc,
+
+  query,
+
+  orderBy
 
 }
 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
 
@@ -68,12 +77,16 @@ const firebaseConfig = {
 };
 
 
+/* INITIALIZE */
+
 const app =
 initializeApp(firebaseConfig);
 
 const db =
 getFirestore(app);
 
+
+/* ELEMENTS */
 
 const ordersContainer =
 document.getElementById("orders-container");
@@ -84,22 +97,46 @@ document.getElementById("newOrderSound");
 const totalOrders =
 document.getElementById("totalOrders");
 
+
+/* VARIABLES */
+
 let firstLoad = true;
+
+
+/* LIVE ORDERS QUERY */
+
+const ordersQuery =
+query(
+
+  collection(db, "orders"),
+
+  orderBy("time", "desc")
+
+);
 
 
 /* LIVE ORDERS */
 
-onSnapshot(collection(db, "orders"),
+onSnapshot(ordersQuery,
 
 (snapshot) => {
 
   ordersContainer.innerHTML = "";
 
-  totalOrders.innerText =
-  snapshot.size;
+
+  /* TOTAL ORDERS */
+
+  if(totalOrders){
+
+    totalOrders.innerText =
+    snapshot.size;
+
+  }
 
 
-  if(!firstLoad){
+  /* SOUND */
+
+  if(!firstLoad && snapshot.size > 0){
 
     orderSound.play();
 
@@ -108,18 +145,88 @@ onSnapshot(collection(db, "orders"),
   firstLoad = false;
 
 
+  /* NO ORDERS */
+
+  if(snapshot.empty){
+
+    ordersContainer.innerHTML = `
+
+      <h2 style="
+        color:white;
+        text-align:center;
+        width:100%;
+      ">
+
+        No Live Orders 📭
+
+      </h2>
+
+    `;
+
+    return;
+
+  }
+
+
+  /* LOOP ORDERS */
+
   snapshot.forEach((docSnap) => {
 
     const data =
     docSnap.data();
 
+
+    const quantity =
+    data.quantity || 1;
+
+
+    const statusClass =
+
+      data.status.includes("Accepted")
+
+      ? "accepted"
+
+      : data.status.includes("Rejected")
+
+      ? "rejected"
+
+      : data.status.includes("Completed")
+
+      ? "accepted"
+
+      : "waiting";
+
+
     ordersContainer.innerHTML += `
 
       <div class="menu-card">
 
+        ${
+          data.image
+          ?
+
+          `<img
+            src="${data.image}"
+            alt="${data.item}"
+          >`
+
+          : ""
+        }
+
         <div class="menu-content">
 
-          <h3>${data.item}</h3>
+          <h3>
+
+            ${data.item}
+
+          </h3>
+
+          <p>
+
+            Quantity:
+            ${quantity}
+
+          </p>
 
           <p>
 
@@ -135,51 +242,78 @@ onSnapshot(collection(db, "orders"),
 
           </p>
 
-          <p class="${
-            data.status.includes('Accepted')
-            ? 'accepted'
-            : data.status.includes('Rejected')
-            ? 'rejected'
-            : 'waiting'
-          }">
+          <p class="${statusClass}">
 
             ${data.status}
 
           </p>
 
-          <p>
+          ${
+            data.requirements
 
-            ${data.requirements || ""}
+            ?
 
-          </p>
+            `<p>
+              Extra:
+              ${data.requirements}
+            </p>`
 
-          <button
-          onclick="acceptOrder('${docSnap.id}')">
+            :
 
-            Accept
+            ""
+          }
 
-          </button>
+          ${
+            data.reason
 
-          <button
-          onclick="rejectOrder('${docSnap.id}')">
+            ?
 
-            Reject
+            `<p>
+              Reason:
+              ${data.reason}
+            </p>`
 
-          </button>
+            :
 
-          <button
-          onclick="completeOrder('${docSnap.id}')">
+            ""
+          }
 
-            Complete
+          <div style="
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:15px;
+          ">
 
-          </button>
+            <button
+            onclick="acceptOrder('${docSnap.id}')">
 
-          <button
-          onclick="deleteOrder('${docSnap.id}')">
+              Accept
 
-            Delete
+            </button>
 
-          </button>
+            <button
+            onclick="rejectOrder('${docSnap.id}')">
+
+              Reject
+
+            </button>
+
+            <button
+            onclick="completeOrder('${docSnap.id}')">
+
+              Complete
+
+            </button>
+
+            <button
+            onclick="deleteOrder('${docSnap.id}')">
+
+              Delete
+
+            </button>
+
+          </div>
 
         </div>
 
@@ -192,24 +326,38 @@ onSnapshot(collection(db, "orders"),
 });
 
 
-/* ACCEPT */
+/* ACCEPT ORDER */
 
 window.acceptOrder =
 async (id) => {
 
-  await updateDoc(
-    doc(db, "orders", id),
-    {
+  try{
 
-      status: "Accepted ✅"
+    await updateDoc(
+      doc(db, "orders", id),
+      {
 
-    }
-  );
+        status: "Accepted ✅",
+
+        reason: ""
+
+      }
+    );
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+    alert("Error accepting order");
+
+  }
 
 };
 
 
-/* REJECT */
+/* REJECT ORDER */
 
 window.rejectOrder =
 async (id) => {
@@ -217,46 +365,90 @@ async (id) => {
   const reason =
   prompt("Enter Reject Reason");
 
-  await updateDoc(
-    doc(db, "orders", id),
-    {
 
-      status: "Rejected ❌",
+  if(reason === null){
 
-      reason: reason
+    return;
 
-    }
-  );
+  }
+
+
+  try{
+
+    await updateDoc(
+      doc(db, "orders", id),
+      {
+
+        status: "Rejected ❌",
+
+        reason:
+        reason || "Not Available"
+
+      }
+    );
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+    alert("Error rejecting order");
+
+  }
 
 };
 
 
-/* COMPLETE */
+/* COMPLETE ORDER */
 
 window.completeOrder =
 async (id) => {
 
-  await updateDoc(
-    doc(db, "orders", id),
-    {
+  try{
 
-      status: "Completed ✅"
+    await updateDoc(
+      doc(db, "orders", id),
+      {
 
-    }
-  );
+        status: "Completed ✅"
 
-  setTimeout(async () => {
-
-    await deleteDoc(
-      doc(db, "orders", id)
+      }
     );
 
-  }, 5000);
+
+    setTimeout(async () => {
+
+      try{
+
+        await deleteDoc(
+          doc(db, "orders", id)
+        );
+
+      }
+
+      catch(error){
+
+        console.log(error);
+
+      }
+
+    }, 5000);
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+    alert("Error completing order");
+
+  }
 
 };
 
 
-/* DELETE */
+/* DELETE ORDER */
 
 window.deleteOrder =
 async (id) => {
@@ -264,11 +456,24 @@ async (id) => {
   const confirmDelete =
   confirm("Delete Order?");
 
+
   if(confirmDelete){
 
-    await deleteDoc(
-      doc(db, "orders", id)
-    );
+    try{
+
+      await deleteDoc(
+        doc(db, "orders", id)
+      );
+
+    }
+
+    catch(error){
+
+      console.log(error);
+
+      alert("Error deleting order");
+
+    }
 
   }
 
