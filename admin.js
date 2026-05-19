@@ -81,14 +81,22 @@ document.getElementById("orders-container");
 const orderSound =
 document.getElementById("newOrderSound");
 
+const totalOrders =
+document.getElementById("totalOrders");
+
 let firstLoad = true;
 
+
+/* LIVE ORDERS */
 
 onSnapshot(collection(db, "orders"),
 
 (snapshot) => {
 
   ordersContainer.innerHTML = "";
+
+  totalOrders.innerText =
+  snapshot.size;
 
 
   if(!firstLoad){
@@ -114,22 +122,35 @@ onSnapshot(collection(db, "orders"),
           <h3>${data.item}</h3>
 
           <p>
+
             Customer:
             ${data.customerName}
+
           </p>
 
           <p>
+
             Bench:
             ${data.bench}
+
           </p>
 
-          <p>
-            Status:
+          <p class="${
+            data.status.includes('Accepted')
+            ? 'accepted'
+            : data.status.includes('Rejected')
+            ? 'rejected'
+            : 'waiting'
+          }">
+
             ${data.status}
+
           </p>
 
           <p>
+
             ${data.requirements || ""}
+
           </p>
 
           <button
@@ -143,6 +164,13 @@ onSnapshot(collection(db, "orders"),
           onclick="rejectOrder('${docSnap.id}')">
 
             Reject
+
+          </button>
+
+          <button
+          onclick="completeOrder('${docSnap.id}')">
+
+            Complete
 
           </button>
 
@@ -164,6 +192,8 @@ onSnapshot(collection(db, "orders"),
 });
 
 
+/* ACCEPT */
+
 window.acceptOrder =
 async (id) => {
 
@@ -178,6 +208,8 @@ async (id) => {
 
 };
 
+
+/* REJECT */
 
 window.rejectOrder =
 async (id) => {
@@ -198,6 +230,33 @@ async (id) => {
 
 };
 
+
+/* COMPLETE */
+
+window.completeOrder =
+async (id) => {
+
+  await updateDoc(
+    doc(db, "orders", id),
+    {
+
+      status: "Completed ✅"
+
+    }
+  );
+
+  setTimeout(async () => {
+
+    await deleteDoc(
+      doc(db, "orders", id)
+    );
+
+  }, 5000);
+
+};
+
+
+/* DELETE */
 
 window.deleteOrder =
 async (id) => {

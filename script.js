@@ -34,13 +34,11 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
 
-
 const sheetID =
 "1EKM11SlVZV8WnXFuc8a5gxaB3ccQN8u_z7b8ExvyKeg";
 
 const url =
 `https://opensheet.elk.sh/${sheetID}/Sheet1`;
-
 
 const popup =
 document.getElementById("popup");
@@ -57,16 +55,58 @@ document.getElementById("benchNumber");
 const customBenchInput =
 document.getElementById("customBench");
 
+const searchInput =
+document.getElementById("searchInput");
+
+const orderCount =
+document.getElementById("orderCount");
+
 let selectedItem = "";
 
 
 /* MENU LOAD */
+
+menuContainer.innerHTML =
+`<p class="loading">
+Loading Menu...
+</p>`;
 
 fetch(url)
 
 .then(res => res.json())
 
 .then(data => {
+
+  displayMenu(data);
+
+  searchInput.addEventListener("input", () => {
+
+    const value =
+    searchInput.value.toLowerCase();
+
+    const filtered =
+    data.filter(item =>
+
+      item.Item
+      .toLowerCase()
+      .includes(value)
+
+    );
+
+    displayMenu(filtered);
+
+  });
+
+})
+
+.catch(error => {
+
+  console.log(error);
+
+});
+
+
+function displayMenu(data){
 
   menuContainer.innerHTML = "";
 
@@ -83,7 +123,9 @@ fetch(url)
           <p>₹${item.Price}</p>
 
           <button class="order-btn">
+
             Order Now
+
           </button>
 
         </div>
@@ -94,13 +136,7 @@ fetch(url)
 
   });
 
-})
-
-.catch(error => {
-
-  console.log(error);
-
-});
+}
 
 
 /* BENCH */
@@ -265,6 +301,9 @@ function listenMyOrders(){
     localStorage.getItem("myOrders")
   ) || [];
 
+  orderCount.innerText =
+  savedOrders.length;
+
   if(savedOrders.length === 0){
 
     ordersStatus.innerHTML =
@@ -282,15 +321,6 @@ function listenMyOrders(){
     const orderBox =
     document.createElement("div");
 
-    orderBox.style.marginBottom =
-    "15px";
-
-    orderBox.style.borderBottom =
-    "1px solid #444";
-
-    orderBox.style.paddingBottom =
-    "10px";
-
     ordersStatus.appendChild(orderBox);
 
     onSnapshot(orderRef, (snapshot) => {
@@ -305,8 +335,16 @@ function listenMyOrders(){
             <b>${data.item}</b>
           </p>
 
-          <p>
+          <p class="${
+            data.status.includes('Accepted')
+            ? 'accepted'
+            : data.status.includes('Rejected')
+            ? 'rejected'
+            : 'waiting'
+          }">
+
             ${data.status}
+
           </p>
 
           ${
@@ -317,6 +355,10 @@ function listenMyOrders(){
             ""
           }
 
+          <p class="order-time">
+            Live Status Updating...
+          </p>
+
         `;
 
       }
@@ -326,4 +368,5 @@ function listenMyOrders(){
   });
 
 }
+
 listenMyOrders();

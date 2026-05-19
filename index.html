@@ -30,21 +30,13 @@
 
     <ul>
 
-      <li>
-        <a href="#menu">Menu</a>
-      </li>
+      <li><a href="#menu">Menu</a></li>
 
-      <li>
-        <a href="#gallery">Gallery</a>
-      </li>
+      <li><a href="#gallery">Gallery</a></li>
 
-      <li>
-        <a href="#reviews">Reviews</a>
-      </li>
+      <li><a href="#reviews">Reviews</a></li>
 
-      <li>
-        <a href="#contact">Contact</a>
-      </li>
+      <li><a href="#contact">Contact</a></li>
 
     </ul>
 
@@ -135,6 +127,12 @@
   <section class="menu" id="menu">
 
     <h2>Popular Menu</h2>
+
+    <input
+    type="text"
+    id="searchInput"
+    placeholder="Search Menu..."
+    class="search-box">
 
     <div
     class="menu-container"
@@ -232,7 +230,10 @@
 
   <div class="status-box">
 
-    <h3>Your Orders</h3>
+    <h3>
+      Your Orders
+      (<span id="orderCount">0</span>)
+    </h3>
 
     <div id="ordersStatus">
 
@@ -294,9 +295,7 @@
 
       <textarea
       id="requirements"
-      placeholder="Extra Requirements">
-
-      </textarea>
+      placeholder="Extra Requirements"></textarea>
 
       <button id="submitOrder">
         Submit Order
