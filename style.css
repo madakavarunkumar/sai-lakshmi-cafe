@@ -311,12 +311,15 @@ body{
   color:white;
   cursor:pointer
 }
-.status-box{
+..status-box{
   position:fixed;
-  top:100px;
-  right:20px;
+  bottom:90px;
+  right:15px;
+  width:220px;
+  max-height:300px;
+  overflow-y:auto;
   background:#1c1c1c;
-  padding:15px 20px;
+  padding:15px;
   border-radius:15px;
   z-index:999;
   box-shadow:0 0 20px rgba(0,0,0,0.4);

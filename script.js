@@ -84,44 +84,55 @@ Loading Menu...
 </p>`;
 
 
-fetch(url)
-
-.then(res => res.json())
-
-.then(data => {
-
-  displayMenu(data);
-
-  if(searchInput){
-
-    searchInput.addEventListener("input", () => {
-
-      const value =
-      searchInput.value.toLowerCase();
-
-      const filtered =
-      data.filter(item =>
-
-        item.Item
-        .toLowerCase()
-        .includes(value)
-
-      );
-
-      displayMenu(filtered);
-
+function loadMenu() {
+  
+  fetch(url)
+    
+    .then(res => res.json())
+    
+    .then(data => {
+      
+      displayMenu(data);
+      
+      if (searchInput) {
+        
+        searchInput.addEventListener("input", () => {
+          
+          const value =
+            searchInput.value.toLowerCase();
+          
+          const filtered =
+            data.filter(item =>
+              
+              item.Item
+              .toLowerCase()
+              .includes(value)
+              
+            );
+          
+          displayMenu(filtered);
+          
+        });
+        
+      }
+      
+    })
+    
+    .catch(error => {
+      
+      console.log(error);
+      
     });
+  
+}
 
-  }
+loadMenu();
 
-})
-
-.catch(error => {
-
-  console.log(error);
-
-});
-
+setInterval(() => {
+  
+  loadMenu();
+  
+}, 10000);
 
 /* DISPLAY MENU */
 
@@ -445,8 +456,13 @@ function listenMyOrders(){
 
     onSnapshot(orderRef, (snapshot) => {
 
-      if(snapshot.exists()){
+  if(!snapshot.exists()){
 
+    orderBox.remove();
+
+    return;
+
+  }
         const data =
         snapshot.data();
 
