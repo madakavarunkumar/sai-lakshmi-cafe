@@ -75,48 +75,79 @@ let selectedItem = "";
 
 let selectedQty = 1;
 
+let fullMenuData = [];
 
-/* LOAD MENU */
 
 /* LOAD MENU */
 
 function loadMenu() {
-  
+
   fetch(url)
-    
-    .then(res => res.json())
-    
-    .then(data => {
-      
-      displayMenu(data);
-      
-    })
-    
-    .catch(error => {
-      
-      console.log(error);
-      
-    });
-  
+
+  .then(res => res.json())
+
+  .then(data => {
+
+    fullMenuData = data;
+
+    displayMenu(fullMenuData);
+
+  })
+
+  .catch(error => {
+
+    console.log(error);
+
+  });
+
 }
+
 
 /* FIRST LOAD */
 
 loadMenu();
 
+
 /* AUTO REFRESH */
 
 setInterval(() => {
-  
-  if (
+
+  if(
     popup.style.display !== "flex"
-  ) {
-    
+  ){
+
     loadMenu();
-    
+
   }
-  
+
 }, 10000);
+
+
+/* SEARCH */
+
+if(searchInput){
+
+  searchInput.addEventListener("input", () => {
+
+    const value =
+    searchInput.value.toLowerCase();
+
+    const filteredData =
+    fullMenuData.filter(item =>
+
+      item.Item
+      .toLowerCase()
+      .includes(value)
+
+    );
+
+    displayMenu(filteredData);
+
+  });
+
+}
+
+
 /* DISPLAY MENU */
 
 function displayMenu(data){
@@ -439,67 +470,67 @@ function listenMyOrders(){
 
     onSnapshot(orderRef, (snapshot) => {
 
-  if(!snapshot.exists()){
+      if(!snapshot.exists()){
 
-    orderBox.remove();
+        orderBox.remove();
 
-    return;
-
-  }
-        const data =
-        snapshot.data();
-
-
-        orderBox.innerHTML = `
-
-          <p>
-
-            <b>${data.item}</b>
-
-          </p>
-
-          <p>
-
-            Quantity:
-            ${data.quantity || 1}
-
-          </p>
-
-          <p class="${
-            data.status.includes("Accepted")
-            ? "accepted"
-
-            : data.status.includes("Rejected")
-            ? "rejected"
-
-            : "waiting"
-          }">
-
-            ${data.status}
-
-          </p>
-
-          ${
-            data.reason
-            ?
-
-            `<p>
-              Reason:
-              ${data.reason}
-            </p>`
-
-            : ""
-          }
-
-          <p class="order-time">
-
-            Live Status Updating...
-
-          </p>
-
-        `;
+        return;
 
       }
+
+      const data =
+      snapshot.data();
+
+
+      orderBox.innerHTML = `
+
+        <p>
+
+          <b>${data.item}</b>
+
+        </p>
+
+        <p>
+
+          Quantity:
+          ${data.quantity || 1}
+
+        </p>
+
+        <p class="${
+          data.status.includes("Accepted")
+          ? "accepted"
+
+          : data.status.includes("Rejected")
+          ? "rejected"
+
+          : "waiting"
+        }">
+
+          ${data.status}
+
+        </p>
+
+        ${
+          data.reason
+
+          ?
+
+          `<p>
+            Reason:
+            ${data.reason}
+          </p>`
+
+          : ""
+        }
+
+        <p class="order-time">
+
+          Live Status Updating...
+
+        </p>
+
+      `;
 
     });
 
