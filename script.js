@@ -84,56 +84,113 @@ Loading Menu...
 </p>`;
 
 
-function loadMenu() {
-  
+/* LOAD MENU */
+
+function loadMenu(searchValue = ""){
+
   fetch(url)
-    
-    .then(res => res.json())
-    
-    .then(data => {
-      
-      displayMenu(data);
-      
-      if (searchInput) {
-        
-        searchInput.addEventListener("input", () => {
-          
-          const value =
-            searchInput.value.toLowerCase();
-          
-          const filtered =
-            data.filter(item =>
-              
-              item.Item
-              .toLowerCase()
-              .includes(value)
-              
-            );
-          
-          displayMenu(filtered);
-          
-        });
-        
-      }
-      
-    })
-    
-    .catch(error => {
-      
-      console.log(error);
-      
+
+  .then(res => res.json())
+
+  .then(data => {
+
+    menuContainer.innerHTML = "";
+
+    const filteredData = data.filter(item =>
+
+      item.Item
+      .toLowerCase()
+      .includes(searchValue.toLowerCase())
+
+    );
+
+    filteredData.forEach(item => {
+
+      menuContainer.innerHTML += `
+
+        <div class="menu-card">
+
+          <img
+          src="${item.Image}"
+          alt="${item.Item}">
+
+          <div class="menu-content">
+
+            <h3>${item.Item}</h3>
+
+            <p>₹${item.Price}</p>
+
+            <div class="quantity-box">
+
+              <button class="qty-btn minus">
+                -
+              </button>
+
+              <span class="qty">
+                1
+              </span>
+
+              <button class="qty-btn plus">
+                +
+              </button>
+
+            </div>
+
+            <button class="order-btn">
+
+              Order Now
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
     });
-  
+
+  })
+
+  .catch(error => {
+
+    console.log(error);
+
+  });
+
 }
+
+
+/* FIRST LOAD */
 
 loadMenu();
 
-setInterval(() => {
-  
-  loadMenu();
-  
-}, 10000);
 
+/* SEARCH */
+
+if(searchInput){
+
+  searchInput.addEventListener("input", () => {
+
+    loadMenu(searchInput.value);
+
+  });
+
+}
+
+
+/* AUTO REFRESH MENU */
+
+setInterval(() => {
+
+  const currentSearch =
+  searchInput
+  ? searchInput.value
+  : "";
+
+  loadMenu(currentSearch);
+
+}, 10000);
 /* DISPLAY MENU */
 
 function displayMenu(data){
